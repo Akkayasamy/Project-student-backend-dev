@@ -1,9 +1,7 @@
-name: Deploy Student Management Backend 
+name: Deploy Student Management Backend
 
 on:
-  push:
-    branches:
-      - main
+  workflow_dispatch:
 
 jobs:
   deploy:
