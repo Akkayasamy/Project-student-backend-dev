@@ -1,0 +1,54 @@
+name: Deploy Student Management Backend
+
+on:
+  push:
+    branches:
+      - main
+
+jobs:
+  deploy:
+    runs-on: ubuntu-latest
+
+    steps:
+      - name: Deploy to EC2
+        uses: appleboy/ssh-action@v1.2.0
+        with:
+          host: ${{ secrets.EC2_HOST }}
+          username: ${{ secrets.EC2_USER }}
+          key: ${{ secrets.EC2_SSH_KEY }}
+
+          script: |
+            cd /var/www/student-management
+
+            echo "Pulling latest code..."
+            git pull origin main
+
+            echo "Creating production .env..."
+
+            cat > .env << 'EOF'
+            PORT=${{ secrets.PORT }}
+            NODE_ENV=${{ secrets.NODE_ENV }}
+
+            DB_HOST=${{ secrets.DB_HOST }}
+            DB_PORT=${{ secrets.DB_PORT }}
+            DB_USER=${{ secrets.DB_USER }}
+            DB_PASSWORD=${{ secrets.DB_PASSWORD }}
+            DB_NAME=${{ secrets.DB_NAME }}
+
+            JWT_SECRET=${{ secrets.JWT_SECRET }}
+            JWT_EXPIRES_IN=${{ secrets.JWT_EXPIRES_IN }}
+
+            CLIENT_ORIGIN=${{ secrets.CLIENT_ORIGIN }}
+            EOF
+
+            echo "Installing dependencies..."
+            npm install --production
+
+            echo "Restarting application..."
+
+            pm2 restart student-management || pm2 start server.js --name student-management
+
+            pm2 save
+
+            echo "Deployment completed successfully."
+```
