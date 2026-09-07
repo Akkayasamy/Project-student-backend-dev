@@ -1,5 +1,4 @@
-```yaml
-name: Deploy Student Management Backend
+ame: Deploy Student Management Backend
 
 on:
   push:
@@ -43,9 +42,8 @@ jobs:
             npm install --production
 
             echo "Restarting application..."
-            pm2 restart student-management || pm2 start server.js --name student-management
+            pm2 restart student-backend || pm2 start server.js --name student-backend
 
             pm2 save
 
             echo "Deployment completed successfully."
-```
