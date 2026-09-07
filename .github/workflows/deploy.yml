@@ -1,4 +1,4 @@
-ame: Deploy Student Management Backend
+name: Deploy Student Management Backend
 
 on:
   push:
